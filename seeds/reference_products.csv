@@ -1,0 +1,11 @@
+product_id,product_name,product_type
+1,Compte Courant,current_account
+2,Livret A,savings
+3,PEL,savings
+4,Assurance Vie,insurance
+5,Crédit Conso,loan
+6,Crédit Immobilier,loan
+7,Carte Gold,card
+8,Carte Premium,card
+9,Pack Jeune,current_account
+10,Pack Sénior,current_account

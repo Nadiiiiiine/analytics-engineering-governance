@@ -1,0 +1,11 @@
+rule_id,rule_name,table_name,severity,action,description
+DQ01,duplicate_transaction,transactions,warn,deduplicate,Same transaction_id received more than once
+DQ02,sign_type_mismatch,transactions,error,quarantine,Credit with a negative amount or debit with a positive amount
+DQ03,orphan_transaction,transactions,error,quarantine,Transaction on an account that does not exist
+DQ04,transaction_before_account_opening,transactions,error,quarantine,Transaction dated before its account opened
+DQ05,future_transaction,transactions,error,quarantine,Transaction dated after the extract date
+DQ06,invalid_email,customers,warn,flag,Email does not match the expected format
+DQ07,unknown_postcode,customers,warn,flag,Postcode not found in the postcode reference
+DQ08,balance_mismatch,accounts,error,flag,Account balance differs from the sum of its transactions
+DQ09,loan_end_before_start,loans,error,quarantine,Loan end date is before its start date
+DQ10,invalid_card_expiry,cards,warn,flag,Card expiry date cannot be parsed as MM/YY
