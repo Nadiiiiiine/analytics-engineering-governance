@@ -1,25 +1,30 @@
-[tool.poetry]
+[project]
 name = "analytics-engineering-governance"
 version = "0.1.0"
-description = ""
-authors = ["Nadiiiiiine nadinelayeb@outlook.fr"]
+description = "Governed banking data warehouse built with dbt and DuckDB"
+authors = [{name = "Nadine LAYEB", email = "nadinelayeb@outlook.fr"}]
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+
+[tool.poetry]
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
 pandas = "^3.0.5"
 Faker = "^40.36.0"
+dbt-metricflow = { version = "^0.15.0", extras = ["dbt-duckdb"] }
 duckdb = "^1.5.5"
+dbt-duckdb = "^1.11.0"
+
+[tool.poetry.group.dev.dependencies]
 sqlfluff = "^4.3.0"
 ruff = "^0.16.4"
 pytest = "^9.1.1"
 pre-commit = "^4.6.2"
 
-[tool.poetry.dev-dependencies]
-pytest = "^9.1.1"
-ruff = "^0.16.4"
-sqlfluff = "^4.3.0"
-pre-commit = "^4.6.2"
+[tool.ruff]
+line-length = 120
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"

@@ -1,1 +1,14 @@
+# generated data and warehouse
 data/
+warehouse.duckdb
+warehouse.duckdb.wal
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# python
+__pycache__/
+.venv/
+.env
