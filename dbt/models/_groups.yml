@@ -1,0 +1,11 @@
+version: 2
+
+groups:
+  - name: data_platform
+    owner:
+      name: Data platform team
+      email: data-platform@example.com
+  - name: finance
+    owner:
+      name: Finance analytics
+      email: nadinelayeb@outlook.fr

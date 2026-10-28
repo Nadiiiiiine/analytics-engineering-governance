@@ -1,0 +1,44 @@
+name: 'analytics_governance'
+version: "1.0.0"
+config-version: 2
+profile: 'analytics_governance'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  analytics_governance:
+    +materialized: view
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: ephemeral
+    marts:
+      +materialized: table
+      core:
+        +schema: marts_core
+      finance:
+        +schema: marts_finance
+    governance:
+      +materialized: view
+      +schema: governance
+
+seeds:
+  analytics_governance:
+    +schema: reference
+    reference_postcodes:
+      +column_types:
+        postcode: varchar
+
+data_tests:
+  analytics_governance:
+    +store_failures: true
+    +schema: test_failures
+flags:
+  require_generic_test_arguments_property: true

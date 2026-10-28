@@ -32,6 +32,7 @@ N_LOANS = 150
 
 ROOT = Path(__file__).resolve().parents[1]
 SEEDS_DIR = ROOT / "seeds"
+DATA_DIR = ROOT / "data" 
 WAREHOUSE = ROOT / "warehouse.duckdb"
 
 EMAIL_DOMAINS = ["gmail.com", "outlook.fr", "orange.fr", "free.fr", "yahoo.fr"]
@@ -335,6 +336,26 @@ def load_to_duckdb(tables: dict[str, pd.DataFrame], as_of: date) -> None:
             con.unregister("incoming")
             print(f"  raw.{name:<16} {len(df):>7,} rows")
 
+def export_files(
+    tables: dict[str, pd.DataFrame],
+    as_of: date,
+    extract_name: str,
+    formats: tuple[str, ...] = ("parquet", "csv"),
+) -> None:
+    """Write each table to data/<extract_name>/ in the requested formats."""
+    out_dir =  DATA_DIR  / extract_name
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    for name, df in tables.items():
+        for fmt in formats:
+            path = out_dir / f"{name}.{fmt}"
+            if fmt == "parquet":
+                df.to_parquet(path, index=False)
+            elif fmt == "csv":
+                df.to_csv(path, index=False, encoding="utf-8")
+            else:
+                raise ValueError(f"Unsupported format: {fmt}")
+            print(f"  {path.relative_to(DATA_DIR)}".ljust(50) + f"{len(df):>7,} rows")
 
 def build_world() -> dict[str, pd.DataFrame]:
     rng = np.random.default_rng(SEED)
@@ -367,7 +388,12 @@ def main() -> None:
     else:
         tables, manifest = inject_anomalies(tables, as_of)
     tables["defect_manifest"] = manifest
-    print(f"Extract {args.extract} (as of {as_of}) -> {WAREHOUSE.name}")
+
+    print(f"\nExtract {args.extract} (as of {as_of})")
+    print(f"\n[1/2] Writing files to data/{args.extract}/")
+    export_files(tables, as_of, args.extract)
+
+    print(f"\n[2/2] Loading into {WAREHOUSE.name}")
     load_to_duckdb(tables, as_of)
 
 

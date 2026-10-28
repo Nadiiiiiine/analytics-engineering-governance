@@ -1,0 +1,60 @@
+version: 2
+
+sources:
+  - name: bank
+    description: Daily extract of the core banking system, loaded by generator/generate_dataset.py.
+    schema: raw
+    tables:
+      - name: customers
+        columns:
+          - name: customer_id
+          - name: first_name
+            config:
+              meta:
+                contains_pii: true
+                pii_category: direct_identifier
+          - name: last_name
+            config:
+              meta:
+                contains_pii: true
+                pii_category: direct_identifier
+          - name: email
+            config:
+              meta:
+                contains_pii: true
+                pii_category: contact
+          - name: phone
+            config:
+              meta:
+                contains_pii: true
+                pii_category: contact
+          - name: dob
+            config:
+              meta:
+                contains_pii: true
+                pii_category: quasi_identifier
+      - name: accounts
+      - name: transactions
+      - name: cards
+        columns:
+          - name: card_number
+            config:
+              meta:
+                contains_pii: true
+                pci: primary_account_number
+          - name: cvv
+            config:
+              meta:
+                contains_pii: true
+                pci: sensitive_authentication_data
+      - name: loans
+      - name: branches
+      - name: defect_manifest
+        description: Ground truth of the defects injected by the generator. Test-only table.
+        config:
+          freshness:
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after: {count: 24, period: hour}
+        error_after: {count: 48, period: hour}
