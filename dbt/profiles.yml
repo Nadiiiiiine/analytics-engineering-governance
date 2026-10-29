@@ -3,5 +3,6 @@ analytics_governance:
   outputs:
     dev:
       type: duckdb
-      path: warehouse.duckdb
+      path: "../warehouse.duckdb"
       threads: 4
+      schema: main

@@ -31,7 +31,7 @@ N_CUSTOMERS = 500
 N_LOANS = 150
 
 ROOT = Path(__file__).resolve().parents[1]
-SEEDS_DIR = ROOT / "seeds"
+SEEDS_DIR = ROOT / "dbt" / "seeds"
 DATA_DIR = ROOT / "data" 
 WAREHOUSE = ROOT / "warehouse.duckdb"
 

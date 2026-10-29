@@ -12,4 +12,3 @@ logs/
 __pycache__/
 .venv/
 .env
-dbt_internal_packages/

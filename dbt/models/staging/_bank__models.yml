@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: stg_bank__customers
+    description: One row per customer as of the extract. Direct identifiers are removed; email is pseudonymised.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: email_hash
+        description: Salted SHA-256 of the normalised email.
+        meta: {pseudonymised: true}
+      - name: home_branch_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_bank__branches')
+                field: branch_id
+
+  - name: stg_bank__accounts
+    columns:
+      - name: account_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_bank__customers')
+                field: customer_id
+      - name: account_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["active", "closed"]
+
+  - name: stg_bank__transactions
+    description: All transactions as delivered, duplicates and defects included.
+    columns:
+      - name: transaction_id
+        data_tests: [not_null]
+      - name: direction
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["credit", "debit"]
+
+  - name: stg_bank__cards
+    description: Cards with the number reduced to its last 4 digits and a salted hash. The CVV is dropped.
+    columns:
+      - name: card_id
+        data_tests: [unique, not_null]
+      - name: card_number_hash
+        meta: {pseudonymised: true}
+
+  - name: stg_bank__loans
+    columns:
+      - name: loan_id
+        data_tests: [unique, not_null]
+      - name: loan_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["ongoing", "paid", "default"]
+
+  - name: stg_bank__branches
+    columns:
+      - name: branch_id
+        data_tests: [unique, not_null]
+
+unit_tests:
+  - name: test_card_number_is_masked_and_expiry_parsed
+    model: stg_bank__cards
+    given:
+      - input: source('bank', 'cards')
+        rows:
+          - {card_id: 1, account_id: 10, product_id: 7, card_number: "4111111111111111", cvv: "123", expiry_date: "07/27", issue_date: "2024-07-01", status: "active", updated_at: "2024-07-01 12:00:00", _extract_date: "2026-06-30", _loaded_at: "2026-06-30 23:00:00"}
+          - {card_id: 2, account_id: 11, product_id: 8, card_number: "4000056655665556", cvv: "456", expiry_date: "13/27", issue_date: "2024-07-01", status: "active", updated_at: "2024-07-01 12:00:00", _extract_date: "2026-06-30", _loaded_at: "2026-06-30 23:00:00"}
+    expect:
+      rows:
+        - {card_id: 1, card_last4: "1111", expires_on: "2027-07-31"}
+        - {card_id: 2, card_last4: "5556", expires_on: null}

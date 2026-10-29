@@ -4,6 +4,11 @@ sources:
   - name: bank
     description: Daily extract of the core banking system, loaded by generator/generate_dataset.py.
     schema: raw
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after: {count: 24, period: hour}
+        error_after: {count: 48, period: hour}
     tables:
       - name: customers
         columns:
@@ -52,9 +57,4 @@ sources:
       - name: defect_manifest
         description: Ground truth of the defects injected by the generator. Test-only table.
         config:
-          freshness:
-    config:
-      loaded_at_field: _loaded_at
-      freshness:
-        warn_after: {count: 24, period: hour}
-        error_after: {count: 48, period: hour}
+          freshness: null          # explicitement pas de freshness sur une table de test
