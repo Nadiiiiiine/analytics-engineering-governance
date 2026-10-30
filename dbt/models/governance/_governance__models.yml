@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: dq_violations
+    description: One row per record breaking a data-quality rule in the current extract.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [rule_id, record_id]
+    columns:
+      - name: rule_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dq_rules')
+                field: rule_id
+
+  - name: dq_summary
+    description: Number of violations per rule for the current extract.
+    columns:
+      - name: rule_id
+        data_tests: [unique, not_null]
